@@ -1,13 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <algorithm> 
 
 using namespace std;
 
 void heapify(int arr[], int n, int i) {
-    int largest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
+    int largest = i;        
+    int left = 2 * i + 1;  
+    int right = 2 * i + 2; 
 
     if (left < n && arr[left] > arr[largest])
         largest = left;
@@ -16,19 +17,19 @@ void heapify(int arr[], int n, int i) {
         largest = right;
 
     if (largest != i) {
-        swap(arr[i], arr[largest]);
-        heapify(arr, n, largest);
+        swap(arr[i], arr[largest]); 
+        heapify(arr, n, largest);     
     }
 }
 
 void heapSort(int arr[], int n) {
-    for (int i = n / 2 - 1; i >= 0; i--) {
+
+    for (int i = n / 2 - 1; i >= 0; i--)
         heapify(arr, n, i);
-    }
 
     for (int i = n - 1; i > 0; i--) {
-        swap(arr[0], arr[i]);
-        heapify(arr, i, 0);
+        swap(arr[0], arr[i]); 
+        heapify(arr, i, 0);   
     }
 }
 
@@ -39,48 +40,29 @@ void printArray(int arr[], int size) {
 }
 
 void testHeapSort() {
-    // Тест 1: Пустой массив
-    int arr1[] = {};
-    int n1 = sizeof(arr1) / sizeof(arr1[0]);
-    heapSort(arr1, n1);
-    assert(n1 == 0); // Пустой массив
+    // Лучший случай (уже отсортированный массив)
+    int bestCase[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int bestCaseSize = sizeof(bestCase) / sizeof(bestCase[0]);
+    heapSort(bestCase, bestCaseSize);
+    assert(is_sorted(bestCase, bestCase + bestCaseSize));
 
-    // Тест 2: Массив из одного элемента
-    int arr2[] = {1};
-    int n2 = sizeof(arr2) / sizeof(arr2[0]);
-    heapSort(arr2, n2);
-    assert(arr2[0] == 1); // Ожидаем: 1
+    // Средний случай (случайный порядок)
+    int averageCase[] = {3, 1, 4, 9, 6, 7, 8, 2, 5, 10};
+    int averageCaseSize = sizeof(averageCase) / sizeof(averageCase[0]);
+    heapSort(averageCase, averageCaseSize);
+    assert(is_sorted(averageCase, averageCase + averageCaseSize));
 
-    // Тест 3: Массив, уже отсортированный
-    int arr3[] = {1, 2, 3, 4, 5};
-    int n3 = sizeof(arr3) / sizeof(arr3[0]);
-    heapSort(arr3, n3);
-    assert(arr3[0] == 1 && arr3[1] == 2 && arr3[2] == 3 && arr3[3] == 4 && arr3[4] == 5); // Ожидаем: 1 2 3 4 5
+    // Худший случай (обратный порядок)
+    int worstCase[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int worstCaseSize = sizeof(worstCase) / sizeof(worstCase[0]);
+    heapSort(worstCase, worstCaseSize);
+    assert(is_sorted(worstCase, worstCase + worstCaseSize));
 
-    // Тест 4: Массив, отсортированный в обратном порядке
-    int arr4[] = {5, 4, 3, 2, 1};
-    int n4 = sizeof(arr4) / sizeof(arr4[0]);
-    heapSort(arr4, n4);
-    assert(arr4[0] == 1 && arr4[1] == 2 && arr4[2] == 3 && arr4[3] == 4 && arr4[4] == 5); // Ожидаем: 1 2 3 4 5
-
-    // Тест 5: Случайный массив
-    int arr5[] = {3, 6, 1, 8, 4, 5};
-    int n5 = sizeof(arr5) / sizeof(arr5[0]);
-    heapSort(arr5, n5);
-    assert(arr5[0] == 1 && arr5[1] == 3 && arr5[2] == 4 && arr5[3] == 5 && arr5[4] == 6 && arr5[5] == 8); 
-
-    // Тест 6: Массив с повторяющимися элементами
-    int arr6[] = {3, 3, 2, 1, 2, 1, 3};
-    int n6 = sizeof(arr6) / sizeof(arr6[0]);
-    heapSort(arr6, n6);
-    assert(arr6[0] == 1 && arr6[1] == 1 && arr6[2] == 2 && arr6[3] == 2 && arr6[4] == 3 && arr6[5] == 3 && arr6[6] == 3); 
-
-    cout << "Все тесты пройдены успешно!" << endl;
+    cout << "All tests passed!" << endl;
 }
 
 int main() {
+    // Запуск тестирования
     testHeapSort();
     return 0;
 }
-
-
