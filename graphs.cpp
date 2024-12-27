@@ -72,26 +72,26 @@ struct Graph {
 
 // BFS
 vector<Node*> bfs(Graph& graph, Node* start, Node* goal) {
-    queue<Node*> q;
-    map<Node*, Node*> parent;
-    set<Node*> visited;
+    queue<Node*> q; // Память: O(V), где V — количество узлов (для очереди)
+    map<Node*, Node*> parent; // Память: O(V) для хранения пути
+    set<Node*> visited; // Память: O(V) для хранения посещённых узлов
 
     q.push(start);
     visited.insert(start);
 
-    while (!q.empty()) {
+    while (!q.empty()) { // Время: O(V + E), где V — количество узлов, E — количество рёбер
         Node* current = q.front();
         q.pop();
 
         if (current == goal) {
-            vector<Node*> path;
+            vector<Node*> path; // Память: O(V) для хранения пути
             for (Node* at = goal; at != nullptr; at = parent[at])
                 path.push_back(at);
-            reverse(path.begin(), path.end());
+            reverse(path.begin(), path.end()); // Время: O(V) для разворота пути
             return path;
         }
 
-        for (auto& [neighbor, _] : current->neighbors) {
+        for (auto& [neighbor, _] : current->neighbors) { // Время: O(E) для обхода соседей
             if (visited.find(neighbor) == visited.end()) {
                 visited.insert(neighbor);
                 parent[neighbor] = current;
@@ -105,13 +105,13 @@ vector<Node*> bfs(Graph& graph, Node* start, Node* goal) {
 
 // DFS
 vector<Node*> dfs(Graph& graph, Node* start, Node* goal) {
-    stack<Node*> s;
-    map<Node*, Node*> parent;
-    set<Node*> visited;
+    stack<Node*> s; // Память: O(V) для стека
+    map<Node*, Node*> parent; // Память: O(V) для хранения пути
+    set<Node*> visited; // Память: O(V) для хранения посещённых узлов
 
     s.push(start);
 
-    while (!s.empty()) {
+    while (!s.empty()) { // Время: O(V + E), где V — количество узлов, E — количество рёбер
         Node* current = s.top();
         s.pop();
 
@@ -119,14 +119,14 @@ vector<Node*> dfs(Graph& graph, Node* start, Node* goal) {
         visited.insert(current);
 
         if (current == goal) {
-            vector<Node*> path;
+            vector<Node*> path; // Память: O(V) для хранения пути
             for (Node* at = goal; at != nullptr; at = parent[at])
                 path.push_back(at);
-            reverse(path.begin(), path.end());
+            reverse(path.begin(), path.end()); // Время: O(V) для разворота пути
             return path;
         }
 
-        for (auto& [neighbor, _] : current->neighbors) {
+        for (auto& [neighbor, _] : current->neighbors) { // Время: O(E) для обхода соседей
             if (visited.find(neighbor) == visited.end()) {
                 parent[neighbor] = current;
                 s.push(neighbor);
@@ -139,10 +139,10 @@ vector<Node*> dfs(Graph& graph, Node* start, Node* goal) {
 
 // Dijkstra
 vector<Node*> dijkstra(Graph& graph, Node* start, Node* goal) {
-    map<Node*, double> distances;
-    map<Node*, Node*> parent;
-    set<Node*> visited;
-    priority_queue<pair<double, Node*>, vector<pair<double, Node*>>, greater<>> pq;
+    map<Node*, double> distances; // Память: O(V) для хранения расстояний
+    map<Node*, Node*> parent; // Память: O(V) для хранения пути
+    set<Node*> visited; // Память: O(V) для хранения посещённых узлов
+    priority_queue<pair<double, Node*>, vector<pair<double, Node*>>, greater<>> pq; // Память: O(V) для очереди с приоритетом
 
     for (auto& [_, node] : graph.nodes) {
         distances[&node] = numeric_limits<double>::infinity();
@@ -150,7 +150,7 @@ vector<Node*> dijkstra(Graph& graph, Node* start, Node* goal) {
     distances[start] = 0;
     pq.emplace(0, start);
 
-    while (!pq.empty()) {
+    while (!pq.empty()) { // Время: O((V + E) * log(V)), где V — количество узлов, E — количество рёбер
         auto [dist, current] = pq.top();
         pq.pop();
 
@@ -158,14 +158,14 @@ vector<Node*> dijkstra(Graph& graph, Node* start, Node* goal) {
         visited.insert(current);
 
         if (current == goal) {
-            vector<Node*> path;
+            vector<Node*> path; // Память: O(V) для хранения пути
             for (Node* at = goal; at != nullptr; at = parent[at])
                 path.push_back(at);
-            reverse(path.begin(), path.end());
+            reverse(path.begin(), path.end()); // Время: O(V) для разворота пути
             return path;
         }
 
-        for (auto& [neighbor, weight] : current->neighbors) {
+        for (auto& [neighbor, weight] : current->neighbors) { // Время: O(E) для обхода соседей
             double new_dist = dist + weight;
             if (new_dist < distances[neighbor]) {
                 distances[neighbor] = new_dist;
@@ -181,13 +181,13 @@ vector<Node*> dijkstra(Graph& graph, Node* start, Node* goal) {
 // A*
 vector<Node*> a_star(Graph& graph, Node* start, Node* goal) {
     auto heuristic = [&](Node* a, Node* b) {
-        return sqrt(pow(a->lat - b->lat, 2) + pow(a->lon - b->lon, 2));
+        return sqrt(pow(a->lat - b->lat, 2) + pow(a->lon - b->lon, 2)); // Время: O(1) для вычисления эвристики
     };
 
-    map<Node*, double> g_score;
-    map<Node*, double> f_score;
-    map<Node*, Node*> parent;
-    priority_queue<pair<double, Node*>, vector<pair<double, Node*>>, greater<>> pq;
+    map<Node*, double> g_score; // Память: O(V) для хранения g-оценок
+    map<Node*, double> f_score; // Память: O(V) для хранения f-оценок
+    map<Node*, Node*> parent; // Память: O(V) для хранения пути
+    priority_queue<pair<double, Node*>, vector<pair<double, Node*>>, greater<>> pq; // Память: O(V) для очереди с приоритетом
 
     for (auto& [_, node] : graph.nodes) {
         g_score[&node] = numeric_limits<double>::infinity();
@@ -197,19 +197,19 @@ vector<Node*> a_star(Graph& graph, Node* start, Node* goal) {
     f_score[start] = heuristic(start, goal);
     pq.emplace(f_score[start], start);
 
-    while (!pq.empty()) {
+    while (!pq.empty()) { // Время: O((V + E) * log(V)), где V — количество узлов, E — количество рёбер
         auto [_, current] = pq.top();
         pq.pop();
 
         if (current == goal) {
-            vector<Node*> path;
+            vector<Node*> path; // Память: O(V) для хранения пути
             for (Node* at = goal; at != nullptr; at = parent[at])
                 path.push_back(at);
-            reverse(path.begin(), path.end());
+            reverse(path.begin(), path.end()); // Время: O(V) для разворота пути
             return path;
         }
 
-        for (auto& [neighbor, weight] : current->neighbors) {
+        for (auto& [neighbor, weight] : current->neighbors) { // Время: O(E) для обхода соседей
             double tentative_g_score = g_score[current] + weight;
             if (tentative_g_score < g_score[neighbor]) {
                 parent[neighbor] = current;
